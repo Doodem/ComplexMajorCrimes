@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import ipywidgets as widgets
 from IPython.display import display, clear_output
+import matplotlib.patches as patches
 
 def VoronoiGraphRoadNetwork(world, seed=None):
     """Initiates process to build a networkx graph with certain attributes.
@@ -86,7 +87,7 @@ def set_node_stations(graph, coords_list):
         graph.nodes[station_node]['station'] = True
     return graph
 
-def PlotResponse(ax, data, x, y, sd=None, group=None, label=None):
+def PlotResponse(ax, data, x, y, sd=None, group=None, label=None, colour=['#666666', '#FDBF2D', '#4C67DD', '#F56665', '#BEBEBE']):
     """Plots results of response.
     
     example:
@@ -97,19 +98,20 @@ def PlotResponse(ax, data, x, y, sd=None, group=None, label=None):
     >>> plt.tight_layout()
     >>> plt.show()
     """
-    
+
     label_map = {
-        'Pheromone': 'Pheromone',
-        'TimeStep': 'Time Steps',
-        'Avg_Gathered': 'Information Gathered',  
-        'Avg_Time': 'Response Time',  
-        'Avg_Covered': 'Incident Coverage',   
-        'Avg_Reached': 'Reached Incident',
-        'Avg_Hits': 'Non-Cumulative Information Gathered', 
-        'Avg_Hits': 'Non-Cumulative Incident Coverage',
-        'Avg_Equality': 'Information Equality'      
+        'Pheromone': r'$p$',
+        'TimeStep': r'$t$',
+        'Avg_Gathered': r'$G(t)$',  
+        'Avg_Time': r'$t$',  
+        'Avg_Covered': r'$C(t)$',   
+        'Avg_Reached': r'$R(t)$',
+        'Avg_Hits': r'$N(t)$', 
+        'Avg_Equality': r'$E(t)$'      
     }
-    
+
+    ax.set_prop_cycle('color', colour)
+
     grouped = data.groupby(group)
 
     for _, group in grouped:
@@ -127,8 +129,8 @@ def PlotResponse(ax, data, x, y, sd=None, group=None, label=None):
     if label is not None:
         ax.legend()
 
-    ax.set_xlabel(label_map[x])
-    ax.set_ylabel(label_map[y])
+    ax.set_xlabel(label_map[x], fontsize = 22)
+    ax.set_ylabel(label_map[y], fontsize = 22)
 
 class AgentResponder:
     
@@ -408,7 +410,7 @@ class MajorCrimeIncidentResponse:
     
     def __init__(self, world, search_radius_size=25, number_of_responders=30, pheromone_deposit=0.5, pheromone_decay=0,
                  staggered_dispatch=False, staggered_dispatch_responders=10, staggered_dispatch_delta=20,
-                 evolving_incident=False, evolving_incident_growth_by=0, evolving_incident_growth_delta=0, evolving_incident_regenerate_delta=0, # add evolving_incident = False, then set defaults 1, 20, 20
+                 evolving_incident=False, evolving_incident_growth_by=0, evolving_incident_growth_delta=0, evolving_incident_regenerate_delta=0,
                  emerging_incident=False, emerging_incident_k=0.2, emerging_incident_n=1.5,
                  spreading_incident=False, spreading_incident_ego_graph=1, spreading_incident_threshold=0.5, spreading_incident_probability=0.05, spreading_incident_time_multiplier=0.001):
         """Initalise simulation parameters. 
@@ -511,17 +513,18 @@ class MajorCrimeIncidentResponse:
         fig = plt.figure()
         return nx.draw(self.world.graph, self.world.pos, node_size=self.world.node_map[1], node_color=self.world.colour_map[1], edge_color=self.world.edge_map[1])
     
-    def sim(self):
+    def sim(self, x=None, y=None, zoom=None):
         """Outputs gif of simulation.
         """
         x_coords, y_coords = self.get_coordinates_list()
         fig = plt.figure()
+
         def animate(i):
             plt.cla()
             nx.draw(self.world.graph, self.world.pos, node_size=self.world.node_map[i], node_color=self.world.colour_map[i], edge_color=self.world.edge_map[i], width = 2)
             plt.plot(x_coords[:, i], y_coords[:, i], 'bs', markersize=5)
             plt.text(0.05, 1, f"t = {i}")
-        
+
         return animation.FuncAnimation(fig, animate, frames=len(x_coords[0]), interval=1, repeat=False)
 
     def animate_metrics(self):
@@ -559,9 +562,9 @@ class MajorCrimeIncidentResponse:
             plt.cla()
             set_zoom(x, y, zoom)
         
-            nx.draw(self.world.graph, self.world.pos, node_size=self.world.node_map[i], node_color=self.world.colour_map[i], edge_color=self.world.edge_map[i])
+            nx.draw(self.world.graph, self.world.pos, node_size=self.world.node_map[i], node_color=self.world.colour_map[i], edge_color=self.world.edge_map[i], width = 2)
             plt.plot(x_coords[:, i], y_coords[:, i], 'bs', markersize=5)
-            
+        
         def set_zoom(x, y, zoom):
             if x is not None and y is not None and zoom is not None:
                 x_min, x_max = x - zoom/2, x + zoom/2

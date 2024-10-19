@@ -20,8 +20,8 @@ multiple response movements to various incident scenarios.
 Agent-based modelling is used to represent autonomous agent responders making pathing decisions on a graph road network. To guide them, we develop algorithms that combine the Inverted Ant Colony Optimisation and A* shortest path algorithms. These encourage agents to gather new information on short alternative paths relative to other agents en route to an incident.
 
 <p float="left">
-  <img src="assets/paths.png" width="400" />
-  <img src="assets/components.png" width="300" /> 
+  <img src="assets/paths.png" width="300" />
+  <img src="assets/components.gif" width="300" /> 
 </p>
 
 The first figure shows an illustration of agent path decision making. Paths (a) and (b) are the same distance. The responder sees path (b) as faster given the previous responder took path (a) and deposited pheromones (purple) which changed the landscape. The second figure shows an illustration of model components. Agent responders (blue) start at police station nodes (cyan). They traverse edges representing roads (black) on their way to the incident node (red). Only roads within the search radius (orange) have information points to be gathered by agents. As they traverse roads, they deposit pheromones (purple) on the edges. A darker shade indicates multiple traversals on that same edge.
@@ -148,8 +148,8 @@ plt.show()
 ```
 
 <p float="left">
-  <img src="assets/results1.png" width="400" />
-  <img src="assets/results2.png" width="400" /> 
+  <img src="assets/interactions.png" width="400" />
+  <img src="assets/emerging.png" width="400" /> 
 </p>
 
 ## Citation
